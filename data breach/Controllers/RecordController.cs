@@ -42,7 +42,13 @@ namespace data_breach.Controllers
             return _recordService.Get(name, collName);
         }
 
-
+        [Route("api/update_access")]
+        [HttpPost]
+        public IActionResult Update([FromBody]string collName, [FromBody] string role, [FromBody] User user)
+        {
+            _recordService.Update(collName, role, user);
+            return StatusCode(201);
+        }
 
         [HttpPost]
         public ActionResult<Collection1> Create(Collection1 coll)
