@@ -28,7 +28,7 @@ namespace data_breach.Services
 
         
 
-        public List<BsonDocument> Get([FromBody] bool getusers)
+        public List<BsonDocument> Get(bool getusers)
         {
             var users = _users.Find(FilterDefinition<User>.Empty)
                 .Project(Builders<User>.Projection.Include("user").Exclude("_id"));
@@ -40,7 +40,7 @@ namespace data_breach.Services
             return _database.ListCollectionNames().ToList();
         }
 
-        public string Get([FromBody] string name, [FromBody] string collName)
+        public string Get(string name, string collName)
         {
             return _coll1.Find(x => x.name == name).ToString();
         }
@@ -53,5 +53,11 @@ namespace data_breach.Services
 
         public void Update(string name, Collection1 collIn) => 
             _coll1.ReplaceOne(coll => coll.name == name, collIn);
+
+        public void Update(string collName, string role, User new_user)
+        {
+            _users.ReplaceOne(user => user.user == role, new_user);
+
+        }
     }
 }
