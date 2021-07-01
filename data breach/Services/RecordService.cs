@@ -4,23 +4,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using MongoDB.Bson;
+using Microsoft.AspNetCore.Mvc;
 
 namespace data_breach.Services
 {
     public class RecordService
     {
+        protected static IMongoDatabase _database;
         private readonly IMongoCollection<Collection1> _coll1;
+        private readonly IMongoCollection<User> _users;
+
+        private readonly IMongoClient _client;
 
         public RecordService(IDatabaseSettings settings)
         {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
+            _client = new MongoClient(settings.ConnectionString);
+            _database = _client.GetDatabase(settings.DatabaseName);
 
-            _coll1 = database.GetCollection<Collection1>("Collection1");
+            _coll1 = _database.GetCollection<Collection1>(settings.Collection);
+            _users = _database.GetCollection<User>("users");
         }
 
-        public List<Collection1> Get() =>
-            _coll1.Find(coll => true).ToList();
+        
+
+        public List<BsonDocument> Get([FromBody] bool getusers)
+        {
+            var users = _users.Find(FilterDefinition<User>.Empty)
+                .Project(Builders<User>.Projection.Include("user").Exclude("_id"));
+            return users.ToList();
+        }
+
+        public List<string> Get()
+        {
+            return _database.ListCollectionNames().ToList();
+        }
+
+        public string Get([FromBody] string name, [FromBody] string collName)
+        {
+            return _coll1.Find(x => x.name == name).ToString();
+        }
 
         public Collection1 Create(Collection1 coll)
         {

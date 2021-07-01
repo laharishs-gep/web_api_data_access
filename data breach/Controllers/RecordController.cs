@@ -2,6 +2,7 @@
 using data_breach.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,17 +14,35 @@ namespace data_breach.Controllers
     [ApiController]
     public class RecordController : ControllerBase
     {
-        private readonly IConfiguration _config;
         private readonly RecordService _recordService;
 
-        public RecordController(IConfiguration config, RecordService service)
+        public RecordController(RecordService service)
         {
-            _config = config;
             _recordService = service;
         }
 
+        [Route("api/getroles")]
         [HttpGet]
-        public List<Collection1> Get() => _recordService.Get();
+        public List<BsonDocument> Get([FromBody] bool getusers)
+        {
+            return _recordService.Get(getusers);
+        }
+
+        [Route("api/getcollections")]
+        [HttpGet]
+        public List<string> Get()
+        {
+            return _recordService.Get();
+        }
+
+        [Route("api/getaccstring")]
+        [HttpGet]
+        public string Get([FromBody] string name, [FromBody] string collName)
+        {
+            return _recordService.Get(name, collName);
+        }
+
+
 
         [HttpPost]
         public ActionResult<Collection1> Create(Collection1 coll)

@@ -13,5 +13,7 @@ namespace data_breach.Models
         public string name { get; set; }
 
         public string author { get; set; }
+
+        public string user { get; set; }
     }
 }
