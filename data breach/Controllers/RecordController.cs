@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace data_breach.Controllers
 {
     [Route("api/[controller]")]
-    
+
     [ApiController]
     public class RecordController : ControllerBase
     {
@@ -27,7 +27,7 @@ namespace data_breach.Controllers
         [HttpGet]
         public List<UserAccessRights> GetRoles()
         {
-            return _recordService.Get();
+            return _recordService.GetRoles();
         }
 
         [Route("[action]")]
@@ -42,7 +42,7 @@ namespace data_breach.Controllers
         public IActionResult Insert([FromBody] JsonElement insert)
         {
             _recordService.InsertDocument(
-                insert.GetProperty("collectionName").ToString(), 
+                insert.GetProperty("collectionName").ToString(),
                 insert.GetProperty("Document").ToString()
                 );
             return StatusCode(201);
@@ -52,14 +52,14 @@ namespace data_breach.Controllers
         [HttpPost]
         public ActionResult UpdateAccess([FromBody] JsonElement update)
         {
-            _recordService.Update(
+            _recordService.UpdateAccess(
                 update.GetProperty("userRole").ToString(),
                 update.GetProperty("collectionName").ToString(),
                 update.GetProperty("newAccessString").ToString()
                 );
             return StatusCode(200);
         }
-        
+
 
         [Route("[action]")]
         [HttpPost]
@@ -68,7 +68,12 @@ namespace data_breach.Controllers
             return _recordService.LoadDocuments(model.collectionName, model.userId);
         }
 
-
+        [Route("[action]")]
+        [HttpGet]
+        public string GetAccessString([FromBody] accessStringModel model)
+        {
+            return _recordService.GetAccessString(model.userRole, model.collectionName);
+        }
         
 
 
@@ -84,5 +89,12 @@ namespace data_breach.Controllers
             public string collectionName { get; set; }
             public object Document { get; set; }
         }
+        public class accessStringModel
+        {
+            public string collectionName { get; set; }
+            public string userRole { get; set; }
+        }
     }
+
+    
 }

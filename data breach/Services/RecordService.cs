@@ -30,7 +30,7 @@ namespace data_breach.Services
             _accessRights = _database.GetCollection<UserAccessRights>("AccessRights");
         }
 
-        public List<UserAccessRights> Get()
+        public List<UserAccessRights> GetRoles()
         {
             var fieldsBuilder = Builders<UserAccessRights>.Projection;
             var fields = fieldsBuilder.Exclude(d => d.AccessString).Exclude(d => d.CollectionName);
@@ -73,7 +73,7 @@ namespace data_breach.Services
             return res_final;
         }
 
-        public void Update(string userRole, string collectionName, string newAccessString)
+        public void UpdateAccess(string userRole, string collectionName, string newAccessString)
         {
             var collection = _database.GetCollection<UserAccessRights>("AccessRights");
             var builder = Builders<UserAccessRights>.Filter;
@@ -88,12 +88,6 @@ namespace data_breach.Services
                 );
         }
 
-
-
-
-
-
-        //helper methods
         public string ToGUID(string hex)
         {
             var a = hex.Substring(6, 2) + hex.Substring(4, 2) + hex.Substring(2, 2) + hex.Substring(0, 2);
@@ -237,36 +231,5 @@ namespace data_breach.Services
             Console.WriteLine(result);
         }
 
-        //public List<BsonDocument> Get(bool getusers)
-        //{
-        //    var users = _users.Find(FilterDefinition<User>.Empty)
-        //        .Project(Builders<User>.Projection.Include("user").Exclude("_id"));
-        //    return users.ToList();
-        //}
-
-        //public List<string> Get()
-        //{
-        //    return _database.ListCollectionNames().ToList();
-        //}
-
-        //public string Get(Guid Id, string collName)
-        //{
-        //    return _transactions.Find(x => x.Id == Id).ToString();
-        //}
-
-        //public Transaction Create(Transaction coll)
-        //{
-        //    _transactions.InsertOne(coll);
-        //    return coll;
-        //}
-
-        //public void Update(string name, Transaction collIn) => 
-        //    _transactions.ReplaceOne(coll => coll.name == name, collIn);
-
-        //public void Update(string collName, string role, User new_user)
-        //{
-        //    _users.ReplaceOne(user => user.user == role, new_user);
-
-        //}
     }
 }
