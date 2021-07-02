@@ -6,11 +6,13 @@ using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace data_breach.Controllers
 {
     [Route("api/[controller]")]
+    
     [ApiController]
     public class RecordController : ControllerBase
     {
@@ -21,40 +23,66 @@ namespace data_breach.Controllers
             _recordService = service;
         }
 
-        [Route("api/getroles")]
+        [Route("[action]")]
         [HttpGet]
-        public List<BsonDocument> Get([FromBody] bool getusers)
-        {
-            return _recordService.Get(getusers);
-        }
-
-        [Route("api/getcollections")]
-        [HttpGet]
-        public List<string> Get()
+        public List<UserAccessRights> GetRoles()
         {
             return _recordService.Get();
         }
 
-        [Route("api/getaccstring")]
+        [Route("[action]")]
         [HttpGet]
-        public string Get([FromBody] string name, [FromBody] string collName)
+        public List<string> GetCollections()
         {
-            return _recordService.Get(name, collName);
+            return _recordService.GetCollections();
         }
 
-        [Route("api/update_access")]
+        [Route("[action]")]
         [HttpPost]
-        public IActionResult Update([FromBody]string collName, [FromBody] string role, [FromBody] User user)
+        public IActionResult Insert([FromBody] JsonElement insert)
         {
-            _recordService.Update(collName, role, user);
+            _recordService.InsertDocument(
+                insert.GetProperty("collectionName").ToString(), 
+                insert.GetProperty("Document").ToString()
+                );
             return StatusCode(201);
         }
 
+        [Route("[action]")]
         [HttpPost]
-        public ActionResult<Collection1> Create(Collection1 coll)
+        public ActionResult UpdateAccess([FromBody] JsonElement update)
         {
-            _recordService.Create(coll);
-            return CreatedAtRoute("GetRecord", new { id = coll.Id.ToString() }, coll);
+            _recordService.Update(
+                update.GetProperty("userRole").ToString(),
+                update.GetProperty("collectionName").ToString(),
+                update.GetProperty("newAccessString").ToString()
+                );
+            return StatusCode(200);
+        }
+        
+
+        [Route("[action]")]
+        [HttpPost]
+        public List<object> GetDocuments([FromBody] getDocumentsModel model)
+        {
+            return _recordService.LoadDocuments(model.collectionName, model.userId);
+        }
+
+
+        
+
+
+        //helpers
+        public class getDocumentsModel
+        {
+            public string collectionName { get; set; }
+            public string userId { get; set; }
+        }
+
+        public class insertDocumentModel
+        {
+            public string collectionName { get; set; }
+            public object Document { get; set; }
         }
     }
 }
