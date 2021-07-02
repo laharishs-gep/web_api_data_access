@@ -218,7 +218,7 @@ namespace data_breach.Services
         {
             var collection = _database.GetCollection<UserAccessRights>("AccessRights");
             var builder = Builders<UserAccessRights>.Filter;
-            var filter = builder.Eq("UserRole", userRole) & builder.Eq("CollectionName", collectionName);
+            var filter = builder.Eq("UserRole", userRole) & builder.Eq("CollectionName", "Transactions");
             string accessString = collection.Find(filter).First().AccessString;
             return accessString;
         }

@@ -69,7 +69,7 @@ namespace data_breach.Controllers
         }
 
         [Route("[action]")]
-        [HttpGet]
+        [HttpPost]
         public string GetAccessString([FromBody] accessStringModel model)
         {
             return _recordService.GetAccessString(model.userRole, model.collectionName);
