@@ -58,6 +58,14 @@ namespace data_breach.Services
             {
                 userId = "ed9f3e47-861c-403d-8d32-776bfd608936";
             }
+
+            if(userId == "Buyer")
+            {
+                userId = "7a00e343-c1fa-43e0-962d-528585d6f723";
+            } else
+            {
+                userId = "69996956-6acb-4d4e-b624-0855c475fa1a";
+            }
            
             Guid userGuid = new Guid(userId);
             string userAccessString = GetAccessString(GetUserRole(userGuid), "Transactions");
@@ -68,6 +76,7 @@ namespace data_breach.Services
                 return null;
             }
 
+            
             var result = collection.Find(new BsonDocument()).Project(userAccessString).ToList();
             var res_final = result.ConvertAll(BsonTypeMapper.MapToDotNetValue);
             return res_final;
